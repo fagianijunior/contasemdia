@@ -1,0 +1,12 @@
+<% content_for :title, "Editing wallet" %>
+
+<h1>Editing wallet</h1>
+
+<%= render "form", wallet: @wallet %>
+
+<br>
+
+<div>
+  <%= link_to "Show this wallet", @wallet %> |
+  <%= link_to "Back to wallets", wallets_path %>
+</div>

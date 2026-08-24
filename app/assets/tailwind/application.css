@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Sidebar links */
+  .sidebar-link {
+    @apply flex items-center p-2 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-100;
+  }
+
+  .sidebar-link-active {
+    @apply bg-gray-100;
+  }
+
+  .sidebar-icon {
+    @apply flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900;
+  }
+
+  /* Toggle switch */
+  .toggle-bg:after {
+    content: '';
+    @apply absolute left-0.5 top-0.5 bg-white border border-gray-300 h-5 w-5 rounded-full transition duration-150;
+  }
+
+  /* Badges */
+  .badge-success {
+    @apply text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-800;
+  }
+
+  .badge-danger {
+    @apply text-xs font-semibold px-2.5 py-0.5 rounded-full bg-red-100 text-red-800;
+  }
+
+  .badge-warning {
+    @apply text-xs font-semibold px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800;
+  }
+
+  /* Cards do dashboard */
+  .dashboard-card {
+    @apply p-4 bg-white border border-gray-200 rounded-lg shadow-sm;
+  }
+
+  /* Tabela estilo Windster */
+  .windster-table {
+    @apply w-full text-sm text-left text-gray-500;
+  }
+
+  .windster-table thead {
+    @apply text-xs text-gray-700 uppercase bg-gray-50;
+  }
+
+  .windster-table tbody tr {
+    @apply bg-white border-b hover:bg-gray-50;
+  }
+
+  /* Botões */
+  .btn-primary {
+    @apply text-white bg-cyan-700 hover:bg-cyan-800 focus:ring-4 focus:ring-cyan-300 font-medium rounded-lg text-sm px-5 py-2.5;
+  }
+
+  .btn-secondary {
+    @apply text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5;
+  }
+
+  .btn-danger {
+    @apply text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5;
+  }
+
+  /* Inputs e labels */
+  .form-input {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5;
+  }
+
+  .form-label {
+    @apply block mb-2 text-sm font-medium text-gray-900;
+  }
+
+  /* Page header */
+  .page-header {
+    @apply py-6;
+  }
+
+  .page-title {
+    @apply text-2xl font-bold text-gray-900;
+  }
+}

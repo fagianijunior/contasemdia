@@ -1,0 +1,29 @@
+<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Redefinir senha</h2>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Digite sua nova senha abaixo.</p>
+
+<%= form_with url: password_path(params[:token]), method: :put, class: "space-y-4" do |form| %>
+  <div>
+    <label class="form-label" for="password">Nova senha</label>
+    <%= form.password_field :password,
+          required: true,
+          autocomplete: "new-password",
+          placeholder: "••••••••",
+          maxlength: 72,
+          class: "form-input",
+          id: "password" %>
+  </div>
+
+  <div>
+    <label class="form-label" for="password_confirmation">Confirmar senha</label>
+    <%= form.password_field :password_confirmation,
+          required: true,
+          autocomplete: "new-password",
+          placeholder: "••••••••",
+          maxlength: 72,
+          class: "form-input",
+          id: "password_confirmation" %>
+  </div>
+
+  <%= form.submit "Salvar nova senha",
+        class: "w-full btn-primary cursor-pointer" %>
+<% end %>

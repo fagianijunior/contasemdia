@@ -1,0 +1,11 @@
+<% content_for :title, "New wallet" %>
+
+<h1>New wallet</h1>
+
+<%= render "form", wallet: @wallet %>
+
+<br>
+
+<div>
+  <%= link_to "Back to wallets", wallets_path %>
+</div>

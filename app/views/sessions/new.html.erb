@@ -1,0 +1,39 @@
+<h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Entrar na sua conta</h2>
+
+<%= form_with url: session_path, class: "space-y-4" do |form| %>
+  <div>
+    <label class="form-label" for="email_address">E-mail</label>
+    <%= form.email_field :email_address,
+          required: true,
+          autofocus: true,
+          autocomplete: "username",
+          placeholder: "nome@empresa.com",
+          value: params[:email_address],
+          class: "form-input",
+          id: "email_address" %>
+  </div>
+
+  <div>
+    <label class="form-label" for="password">Senha</label>
+    <%= form.password_field :password,
+          required: true,
+          autocomplete: "current-password",
+          placeholder: "••••••••",
+          maxlength: 72,
+          class: "form-input",
+          id: "password" %>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <%= link_to "Esqueceu a senha?", new_password_path,
+          class: "text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-500" %>
+  </div>
+
+  <%= form.submit "Entrar",
+        class: "w-full btn-primary cursor-pointer" %>
+
+  <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+    Não tem conta?
+    <%= link_to "Criar conta", new_user_path, class: "font-medium text-cyan-600 hover:underline dark:text-cyan-500" %>
+  </p>
+<% end %>

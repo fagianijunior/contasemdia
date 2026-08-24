@@ -1,0 +1,11 @@
+<% content_for :title, "New credit card" %>
+
+<h1>New credit card</h1>
+
+<%= render "form", credit_card: @credit_card %>
+
+<br>
+
+<div>
+  <%= link_to "Back to credit cards", credit_cards_path %>
+</div>
