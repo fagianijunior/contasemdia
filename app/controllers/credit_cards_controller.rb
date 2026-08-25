@@ -65,6 +65,6 @@ class CreditCardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def credit_card_params
-      params.expect(credit_card: [ :user_id, :name, :limit, :closing_day, :due_day ])
+      params.expect(credit_card: [ :user_id, :name, :bank, :limit, :closing_day, :due_day ])
     end
 end

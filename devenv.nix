@@ -1,6 +1,5 @@
-{
-  pkgs,
-  ...
+{ pkgs
+, ...
 }:
 
 {
@@ -21,6 +20,7 @@
     pkgs.gcc
     pkgs.gnumake
     pkgs.zlib
+    pkgs.rubyPackages_4_0.ruby-vips
   ];
 
   # To use 'languages.ruby.version or languages.ruby.versionFile', run the following command:

@@ -79,17 +79,21 @@ class TransactionsController < ApplicationController
 
   def handle_csv_import
     csv_file = params[:csv_file]
-    bank = params[:import_bank]
     target_type = params[:import_target_type] # 'wallet' ou 'credit_card'
     target_id = params[:import_target_id]
 
-    if csv_file.blank? || target_id.blank? || bank.blank?
+    if csv_file.blank? || target_id.blank?
       flash[:alert] = "Selecione o arquivo, o banco e a conta de destino para importar."
       redirect_to new_transaction_path
       return
     end
 
     begin
+      bank = if target_type == "wallet"
+                 Current.user.wallets.find(target_id).bank
+               else
+                 Current.user.credit_cards.find(target_id).bank
+               end
       target = if target_type == "wallet"
                  Current.user.wallets.find(target_id)
                else

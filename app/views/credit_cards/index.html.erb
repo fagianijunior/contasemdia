@@ -18,6 +18,7 @@
         <thead>
           <tr>
             <th scope="col" class="px-4 py-3">Nome</th>
+            <th scope="col" class="px-4 py-3">Banco</th>
             <th scope="col" class="px-4 py-3">Limite</th>
             <th scope="col" class="px-4 py-3 text-center">Fechamento / Vencimento</th>
             <th scope="col" class="px-4 py-3">
@@ -38,6 +39,9 @@
                   </div>
                   <%= credit_card.name %>
                 </div>
+              </td>
+              <td class="px-4 py-3">
+                <%= credit_card.bank %>
               </td>
               <td class="px-4 py-3">
                 <%= number_to_currency(credit_card.limit, unit: "R$ ", separator: ",", delimiter: ".") %>

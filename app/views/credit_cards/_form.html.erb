@@ -8,7 +8,13 @@
       </ul>
     </div>
   <% end %>
-
+    <div>
+      <%= form.label :bank, "Banco", class: "form-label" %>
+      <%= form.select :bank,
+            Wallet::BANKS,
+            { prompt: "Selecione o banco" },
+            class: "form-input" %>
+    </div>
   <div>
     <%= form.label :name, "Nome do Cartão", class: "form-label" %>
     <%= form.text_field :name, placeholder: "Ex: Nubank Platinum", class: "form-input" %>

@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_25_025933) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_25_174350) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "credit_cards", force: :cascade do |t|
+    t.string "bank"
     t.integer "closing_day"
     t.datetime "created_at", null: false
     t.integer "due_day"
