@@ -1,11 +1,14 @@
-<% content_for :title, "New wallet" %>
+<% content_for :title, "Nova Carteira" %>
 
-<h1>New wallet</h1>
+<div class="page-header">
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+    <%= link_to "Carteiras", wallets_path, class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <span class="text-gray-900">Nova</span>
+  </nav>
+  <h1 class="page-title">Nova Carteira</h1>
+</div>
 
-<%= render "form", wallet: @wallet %>
-
-<br>
-
-<div>
-  <%= link_to "Back to wallets", wallets_path %>
+<div class="dashboard-card max-w-lg">
+  <%= render "form", wallet: @wallet %>
 </div>

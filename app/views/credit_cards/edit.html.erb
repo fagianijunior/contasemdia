@@ -1,12 +1,16 @@
-<% content_for :title, "Editing credit card" %>
+<% content_for :title, "Editar Cartão de Crédito" %>
 
-<h1>Editing credit card</h1>
+<div class="page-header">
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+    <%= link_to "Cartões", credit_cards_path, class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <%= link_to @credit_card.name, credit_card_path(@credit_card), class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <span class="text-gray-900">Editar</span>
+  </nav>
+  <h1 class="page-title">Editar Cartão</h1>
+</div>
 
-<%= render "form", credit_card: @credit_card %>
-
-<br>
-
-<div>
-  <%= link_to "Show this credit card", @credit_card %> |
-  <%= link_to "Back to credit cards", credit_cards_path %>
+<div class="dashboard-card max-w-lg">
+  <%= render "form", credit_card: @credit_card %>
 </div>

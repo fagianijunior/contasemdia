@@ -1,37 +1,63 @@
-<%= form_with(model: wallet) do |form| %>
+<%= form_with model: wallet, class: "space-y-4" do |form| %>
   <% if wallet.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(wallet.errors.count, "error") %> prohibited this wallet from being saved:</h2>
-
-      <ul>
-        <% wallet.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+    <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">
+      <ul class="list-disc list-inside space-y-1">
+        <% wallet.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :user_id, style: "display: block" %>
-    <%= form.text_field :user_id %>
+    <%= form.label :name, "Nome", class: "form-label" %>
+    <%= form.text_field :name, placeholder: "Ex: Conta Bradesco", class: "form-input" %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= form.label :wallet_type, "Tipo", class: "form-label" %>
+      <%= form.select :wallet_type,
+            Wallet::WALLET_TYPE_LABELS.map { |k, v| [v, k] },
+            { prompt: "Selecione o tipo" },
+            class: "form-input" %>
+    </div>
+    <div>
+      <%= form.label :bank, "Banco", class: "form-label" %>
+      <%= form.select :bank,
+            Wallet::BANKS,
+            { prompt: "Selecione o banco" },
+            class: "form-input" %>
+    </div>
   </div>
 
   <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+    <%= form.label :balance, "Saldo inicial", class: "form-label" %>
+    <div class="relative">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-sm pointer-events-none">R$</span>
+      <%= form.text_field :balance,
+            placeholder: "0,00",
+            class: "form-input pl-9",
+            value: wallet.balance.present? ? number_with_precision(wallet.balance, precision: 2, separator: ",") : nil %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :wallet_type, style: "display: block" %>
-    <%= form.number_field :wallet_type %>
-  </div>
+  <% if wallet.new_record? %>
+    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+      <h4 class="text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        Importar Extrato (Opcional)
+      </h4>
+      <p class="text-xs text-gray-600 mb-3">Selecione o arquivo CSV exportado do banco para importar os lançamentos. (Apenas Inter e Nubank suportados no momento)</p>
+      <%= form.file_field :csv_file, class: "form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100 cursor-pointer bg-white" %>
+    </div>
+  <% end %>
 
-  <div>
-    <%= form.label :balance, style: "display: block" %>
-    <%= form.text_field :balance %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+  <div class="flex items-center gap-3 pt-2">
+    <%= form.submit wallet.new_record? ? "Criar Carteira" : "Salvar Alterações",
+          class: "btn-primary cursor-pointer" %>
+    <%= link_to "Cancelar", wallets_path, class: "btn-secondary" %>
   </div>
 <% end %>

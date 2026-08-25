@@ -1,70 +1,75 @@
 class WalletsController < ApplicationController
   before_action :set_wallet, only: %i[ show edit update destroy ]
 
-  # GET /wallets or /wallets.json
   def index
-    @wallets = Wallet.all
+    @wallets = Current.user.wallets.order(created_at: :desc)
   end
 
-  # GET /wallets/1 or /wallets/1.json
   def show
   end
 
-  # GET /wallets/new
   def new
-    @wallet = Wallet.new
+    @wallet = Current.user.wallets.new
   end
 
-  # GET /wallets/1/edit
   def edit
   end
 
-  # POST /wallets or /wallets.json
   def create
-    @wallet = Wallet.new(wallet_params)
+    @wallet = Current.user.wallets.new(wallet_params.except(:csv_file))
+    csv_file = wallet_params[:csv_file]
 
-    respond_to do |format|
-      if @wallet.save
-        format.html { redirect_to @wallet, notice: "Wallet was successfully created." }
-        format.json { render :show, status: :created, location: @wallet }
+    if @wallet.save
+      if csv_file.present?
+        importer_class = case @wallet.bank
+                         when "Nubank"
+                           TransactionImporters::Nubank
+                         when "Inter"
+                           TransactionImporters::Inter
+                         else
+                           nil
+                         end
+
+        if importer_class
+          begin
+            count = importer_class.new(@wallet, csv_file.path).import
+            flash[:notice] = "Carteira criada com sucesso e #{count} transações importadas."
+          rescue StandardError => e
+            logger.error "Erro ao importar CSV: #{e.message}"
+            flash[:notice] = "Carteira criada, mas houve um erro ao importar o arquivo CSV. Verifique se o formato está correto para o banco selecionado."
+          end
+        else
+          flash[:notice] = "Carteira criada. Importação de CSV não suportada para o banco #{@wallet.bank} ainda."
+        end
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @wallet.errors, status: :unprocessable_entity }
+        flash[:notice] = "Carteira criada com sucesso."
       end
+      redirect_to wallets_path
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /wallets/1 or /wallets/1.json
   def update
-    respond_to do |format|
-      if @wallet.update(wallet_params)
-        format.html { redirect_to @wallet, notice: "Wallet was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @wallet }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @wallet.errors, status: :unprocessable_entity }
-      end
+    if @wallet.update(wallet_params)
+      redirect_to @wallet, notice: "Carteira atualizada com sucesso.", status: :see_other
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  # DELETE /wallets/1 or /wallets/1.json
   def destroy
     @wallet.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to wallets_path, notice: "Wallet was successfully destroyed.", status: :see_other }
-      format.json { head :no_content }
-    end
+    redirect_to wallets_path, notice: "Carteira removida com sucesso.", status: :see_other
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_wallet
-      @wallet = Wallet.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def wallet_params
-      params.expect(wallet: [ :user_id, :name, :wallet_type, :balance ])
-    end
+  def set_wallet
+    @wallet = Current.user.wallets.find(params.expect(:id))
+  end
+
+  def wallet_params
+    params.expect(wallet: [ :name, :wallet_type, :bank, :balance, :csv_file ])
+  end
 end

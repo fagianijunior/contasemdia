@@ -3,7 +3,7 @@ class CreditCardsController < ApplicationController
 
   # GET /credit_cards or /credit_cards.json
   def index
-    @credit_cards = CreditCard.all
+    @credit_cards = Current.user.credit_cards.order(created_at: :desc)
   end
 
   # GET /credit_cards/1 or /credit_cards/1.json
@@ -12,7 +12,7 @@ class CreditCardsController < ApplicationController
 
   # GET /credit_cards/new
   def new
-    @credit_card = CreditCard.new
+    @credit_card = Current.user.credit_cards.new
   end
 
   # GET /credit_cards/1/edit
@@ -21,7 +21,7 @@ class CreditCardsController < ApplicationController
 
   # POST /credit_cards or /credit_cards.json
   def create
-    @credit_card = CreditCard.new(credit_card_params)
+    @credit_card = Current.user.credit_cards.new(credit_card_params)
 
     respond_to do |format|
       if @credit_card.save

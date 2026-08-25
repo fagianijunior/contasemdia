@@ -1,42 +1,45 @@
-<%= form_with(model: credit_card) do |form| %>
+<%= form_with model: credit_card, class: "space-y-4" do |form| %>
   <% if credit_card.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(credit_card.errors.count, "error") %> prohibited this credit_card from being saved:</h2>
-
-      <ul>
-        <% credit_card.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+    <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">
+      <ul class="list-disc list-inside space-y-1">
+        <% credit_card.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
   <div>
-    <%= form.label :user_id, style: "display: block" %>
-    <%= form.text_field :user_id %>
+    <%= form.label :name, "Nome do Cartão", class: "form-label" %>
+    <%= form.text_field :name, placeholder: "Ex: Nubank Platinum", class: "form-input" %>
   </div>
 
   <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+    <%= form.label :limit, "Limite", class: "form-label" %>
+    <div class="relative">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 text-sm pointer-events-none">R$</span>
+      <%= form.text_field :limit,
+            placeholder: "0,00",
+            class: "form-input pl-9",
+            value: credit_card.limit.present? ? number_with_precision(credit_card.limit, precision: 2, separator: ",") : nil %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :limit, style: "display: block" %>
-    <%= form.text_field :limit %>
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= form.label :closing_day, "Dia de Fechamento", class: "form-label" %>
+      <%= form.number_field :closing_day, min: 1, max: 31, class: "form-input" %>
+    </div>
+
+    <div>
+      <%= form.label :due_day, "Dia de Vencimento", class: "form-label" %>
+      <%= form.number_field :due_day, min: 1, max: 31, class: "form-input" %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :closing_day, style: "display: block" %>
-    <%= form.number_field :closing_day %>
-  </div>
-
-  <div>
-    <%= form.label :due_day, style: "display: block" %>
-    <%= form.number_field :due_day %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+  <div class="flex items-center gap-3 pt-2">
+    <%= form.submit credit_card.new_record? ? "Cadastrar Cartão" : "Salvar Alterações",
+          class: "btn-primary cursor-pointer" %>
+    <%= link_to "Cancelar", credit_cards_path, class: "btn-secondary" %>
   </div>
 <% end %>

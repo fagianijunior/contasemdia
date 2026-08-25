@@ -83,4 +83,17 @@
   .page-title {
     @apply text-2xl font-bold text-gray-900;
   }
+
+  /* Pagy Tailwind */
+  .pagy-tailwind .pagy-nav {
+    @apply flex space-x-1;
+  }
+
+  .pagy-tailwind .pagy-nav a, .pagy-tailwind .pagy-nav span {
+    @apply px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700;
+  }
+
+  .pagy-tailwind .pagy-nav .current {
+    @apply z-10 px-3 py-2 text-sm font-medium text-cyan-600 border border-cyan-300 bg-cyan-50 hover:bg-cyan-100;
+  }
 }

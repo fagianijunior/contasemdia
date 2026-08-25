@@ -1,12 +1,16 @@
-<% content_for :title, "Editing transaction" %>
+<% content_for :title, "Editar Lançamento" %>
 
-<h1>Editing transaction</h1>
+<div class="page-header">
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+    <%= link_to "Lançamentos", transactions_path, class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <%= link_to @transaction.title, transaction_path(@transaction), class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <span class="text-gray-900">Editar</span>
+  </nav>
+  <h1 class="page-title">Editar Lançamento</h1>
+</div>
 
-<%= render "form", transaction: @transaction %>
-
-<br>
-
-<div>
-  <%= link_to "Show this transaction", @transaction %> |
-  <%= link_to "Back to transactions", transactions_path %>
+<div class="dashboard-card max-w-lg">
+  <%= render "form", transaction: @transaction %>
 </div>

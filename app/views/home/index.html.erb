@@ -18,7 +18,7 @@
     </div>
     <div>
       <span class="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
-        <%= number_to_currency(@wallets.sum(:balance), unit: "R$ ", separator: ",", delimiter: ".") %>
+        <%= number_to_currency(@wallets.sum(&:current_balance), unit: "R$ ", separator: ",", delimiter: ".") %>
       </span>
       <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Saldo total em carteiras</h3>
     </div>
@@ -89,19 +89,14 @@
                 <td class="px-4 py-3">
                   <%= transaction.due_date&.strftime("%d/%m/%Y") || "—" %>
                 </td>
-                <td class="px-4 py-3 font-medium <%= transaction.transaction_type == 0 ? 'text-green-600' : 'text-red-600' %>">
-                  <%= number_to_currency(transaction.amount, unit: "R$ ", separator: ",", delimiter: ".") %>
+                <td class="px-4 py-3 font-medium <%= transaction.income? ? 'text-green-600' : 'text-red-600' %>">
+                  <%= transaction.income? ? "+" : "-" %> <%= number_to_currency(transaction.amount, unit: "R$ ", separator: ",", delimiter: ".") %>
                 </td>
                 <td class="px-4 py-3">
-                  <% case transaction.status %>
-                  <% when 0 %>
-                    <span class="badge-warning">Pendente</span>
-                  <% when 1 %>
+                  <% if transaction.paid? %>
                     <span class="badge-success">Pago</span>
-                  <% when 2 %>
-                    <span class="badge-danger">Vencido</span>
                   <% else %>
-                    <span class="badge-warning">—</span>
+                    <span class="badge-warning">Pendente</span>
                   <% end %>
                 </td>
               </tr>
@@ -142,7 +137,7 @@
               </div>
             </div>
             <span class="text-sm font-semibold text-gray-900 dark:text-white">
-              <%= number_to_currency(wallet.balance, unit: "R$ ", separator: ",", delimiter: ".") %>
+              <%= number_to_currency(wallet.current_balance, unit: "R$ ", separator: ",", delimiter: ".") %>
             </span>
           </li>
         <% end %>

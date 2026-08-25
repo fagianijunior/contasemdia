@@ -1,10 +1,67 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, @wallet.name %>
 
-<%= render @wallet %>
+<div class="page-header flex items-center justify-between">
+  <div>
+    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+      <%= link_to "Carteiras", wallets_path, class: "hover:text-cyan-600" %>
+      <span>/</span>
+      <span class="text-gray-900"><%= @wallet.name %></span>
+    </nav>
+    <h1 class="page-title"><%= @wallet.name %></h1>
+  </div>
+  <div class="flex items-center gap-3">
+    <%= link_to edit_wallet_path(@wallet), class: "btn-secondary flex items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+      </svg>
+      Editar
+    <% end %>
+    <%= button_to wallet_path(@wallet), method: :delete,
+          data: { turbo_confirm: "Tem certeza que deseja remover esta carteira?" },
+          class: "btn-danger flex items-center gap-2 cursor-pointer" do %>
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+      </svg>
+      Excluir
+    <% end %>
+  </div>
+</div>
 
-<div>
-  <%= link_to "Edit this wallet", edit_wallet_path(@wallet) %> |
-  <%= link_to "Back to wallets", wallets_path %>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="dashboard-card">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Informações Gerais</h3>
+    <dl class="space-y-4">
+      <div class="flex justify-between border-b pb-2">
+        <dt class="text-sm font-medium text-gray-500">Banco</dt>
+        <dd class="text-sm text-gray-900"><%= @wallet.bank.presence || "Não informado" %></dd>
+      </div>
+      <div class="flex justify-between border-b pb-2">
+        <dt class="text-sm font-medium text-gray-500">Tipo</dt>
+        <dd class="text-sm text-gray-900">
+          <span class="badge-warning">
+            <%= Wallet::WALLET_TYPE_LABELS[@wallet.wallet_type] || @wallet.wallet_type %>
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Saldo Atual (Calculado)</dt>
+        <dd class="mt-1 text-2xl font-bold <%= @wallet.current_balance >= 0 ? 'text-green-600' : 'text-red-600' %>">
+          <%= number_to_currency(@wallet.current_balance, unit: "R$ ", separator: ",", delimiter: ".") %>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Saldo Inicial</dt>
+        <dd class="mt-1 text-sm text-gray-700">
+          <%= number_to_currency(@wallet.balance, unit: "R$ ", separator: ",", delimiter: ".") %>
+        </dd>
+      </div>
+    </dl>
+  </div>
 
-  <%= button_to "Destroy this wallet", @wallet, method: :delete %>
+  <div class="dashboard-card">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumo</h3>
+    <p class="text-gray-500 text-sm italic">
+      Funcionalidade de resumo em breve...
+    </p>
+  </div>
 </div>

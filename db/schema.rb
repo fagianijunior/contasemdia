@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_17_192749) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_25_025933) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "credit_cards", force: :cascade do |t|
     t.integer "closing_day"
     t.datetime "created_at", null: false
@@ -33,17 +36,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_192749) do
 
   create_table "transactions", force: :cascade do |t|
     t.decimal "amount", precision: 10, scale: 2
+    t.string "category"
     t.datetime "created_at", null: false
-    t.integer "credit_card_id", null: false
+    t.integer "credit_card_id"
     t.date "due_date"
+    t.string "external_id"
+    t.string "fingerprint"
+    t.integer "installment"
     t.date "payment_date"
     t.integer "status"
     t.string "title"
+    t.integer "total_installments"
     t.integer "transaction_type"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.integer "wallet_id", null: false
+    t.integer "wallet_id"
     t.index ["credit_card_id"], name: "index_transactions_on_credit_card_id"
+    t.index ["external_id"], name: "index_transactions_on_external_id"
+    t.index ["fingerprint"], name: "index_transactions_on_fingerprint"
     t.index ["user_id"], name: "index_transactions_on_user_id"
     t.index ["wallet_id"], name: "index_transactions_on_wallet_id"
   end
@@ -58,6 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_192749) do
 
   create_table "wallets", force: :cascade do |t|
     t.decimal "balance", precision: 10, scale: 2
+    t.string "bank"
     t.datetime "created_at", null: false
     t.string "name"
     t.datetime "updated_at", null: false
@@ -68,8 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_192749) do
 
   add_foreign_key "credit_cards", "users"
   add_foreign_key "sessions", "users"
-  add_foreign_key "transactions", "credit_cards"
+  add_foreign_key "transactions", "credit_cards", on_delete: :cascade
   add_foreign_key "transactions", "users"
-  add_foreign_key "transactions", "wallets"
+  add_foreign_key "transactions", "wallets", on_delete: :cascade
   add_foreign_key "wallets", "users"
 end

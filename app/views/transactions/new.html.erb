@@ -1,11 +1,76 @@
-<% content_for :title, "New transaction" %>
+<% content_for :title, "Novo Lançamento" %>
 
-<h1>New transaction</h1>
+<div class="page-header">
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+    <%= link_to "Lançamentos", transactions_path, class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <span class="text-gray-900">Novo</span>
+  </nav>
+  <h1 class="page-title">Novo Lançamento</h1>
+</div>
 
-<%= render "form", transaction: @transaction %>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- Lançamento Manual -->
+  <div class="dashboard-card">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">Lançamento Manual</h3>
+    <%= render "form", transaction: @transaction %>
+  </div>
 
-<br>
+  <!-- Importação CSV -->
+  <div class="dashboard-card">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">Importar Extrato via CSV</h3>
+    
+    <%= form_with url: transactions_path, multipart: true, class: "space-y-4" do |f| %>
+      <%= f.hidden_field :csv_import, value: true %>
+      
+      <div class="p-4 bg-cyan-50 border border-cyan-200 rounded-lg mb-4">
+        <h4 class="text-sm font-semibold text-cyan-800 mb-2">Instruções</h4>
+        <ul class="text-xs text-cyan-700 list-disc list-inside space-y-1">
+          <li>Selecione o banco de origem (Inter ou Nubank)</li>
+          <li>Indique a conta destino (Carteira ou Cartão de Crédito)</li>
+          <li>Faça o upload do arquivo CSV exportado</li>
+        </ul>
+      </div>
 
-<div>
-  <%= link_to "Back to transactions", transactions_path %>
+      <div>
+        <%= f.label :import_bank, "Banco de Origem", class: "form-label" %>
+        <%= f.select :import_bank, ["Inter", "Nubank"], { prompt: "Selecione o Banco" }, class: "form-input" %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :import_target_type, "Tipo de Conta", class: "form-label" %>
+          <%= f.select :import_target_type, 
+              [["Carteira / Conta Corrente", "wallet"], ["Cartão de Crédito", "credit_card"]], 
+              {}, 
+              class: "form-input",
+              onchange: "document.getElementById('import_target_id').innerHTML = this.value === 'wallet' ? document.getElementById('wallet_options').innerHTML : document.getElementById('card_options').innerHTML;" 
+          %>
+        </div>
+        <div>
+          <%= f.label :import_target_id, "Conta de Destino", class: "form-label" %>
+          <%= f.select :import_target_id, Current.user.wallets.pluck(:name, :id), { prompt: "Selecione a conta" }, class: "form-input" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :csv_file, "Arquivo CSV", class: "form-label" %>
+        <%= f.file_field :csv_file, class: "form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100 cursor-pointer bg-white" %>
+      </div>
+
+      <div class="pt-2">
+        <%= f.submit "Processar Importação", class: "w-full btn-primary cursor-pointer" %>
+      </div>
+    <% end %>
+
+    <!-- Options templates (hidden) -->
+    <select id="wallet_options" class="hidden">
+      <option value="">Selecione a conta</option>
+      <%= options_for_select(Current.user.wallets.pluck(:name, :id)) %>
+    </select>
+    <select id="card_options" class="hidden">
+      <option value="">Selecione o cartão</option>
+      <%= options_for_select(Current.user.credit_cards.pluck(:name, :id)) %>
+    </select>
+  </div>
 </div>

@@ -1,12 +1,16 @@
-<% content_for :title, "Editing wallet" %>
+<% content_for :title, "Editar Carteira" %>
 
-<h1>Editing wallet</h1>
+<div class="page-header">
+  <nav class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+    <%= link_to "Carteiras", wallets_path, class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <%= link_to @wallet.name, wallet_path(@wallet), class: "hover:text-cyan-600" %>
+    <span>/</span>
+    <span class="text-gray-900">Editar</span>
+  </nav>
+  <h1 class="page-title">Editar Carteira</h1>
+</div>
 
-<%= render "form", wallet: @wallet %>
-
-<br>
-
-<div>
-  <%= link_to "Show this wallet", @wallet %> |
-  <%= link_to "Back to wallets", wallets_path %>
+<div class="dashboard-card max-w-lg">
+  <%= render "form", wallet: @wallet %>
 </div>
