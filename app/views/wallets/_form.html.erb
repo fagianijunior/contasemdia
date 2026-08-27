@@ -23,11 +23,13 @@
             class: "form-input" %>
     </div>
     <div>
-      <%= form.label :bank, "Banco", class: "form-label" %>
-      <%= form.select :bank,
-            Wallet::BANKS,
-            { prompt: "Selecione o banco" },
-            class: "form-input" %>
+      <%= form.label :bank_id, "Banco", class: "form-label" %>
+      <%= form.collection_select :bank_id, 
+                             @banks, 
+                             :id, 
+                             :name, 
+                             { prompt: "Selecione o banco" }, 
+                             class: "form-input" %>
     </div>
   </div>
 

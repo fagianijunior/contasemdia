@@ -6,7 +6,8 @@
   # https://devenv.sh/basics/
   env.GREET = "devenv";
   env.RAILS_ENV = "development";
-  env.TAILWINDCSS_INSTALL_DIR = "${pkgs.tailwindcss}/bin";
+  env.DATABASE_USERNAME = "postgres";
+  env.DATABASE_PASSWORD = "1qaz2wsx";
 
   # https://devenv.sh/packages/
   packages = [
@@ -21,6 +22,9 @@
     pkgs.gnumake
     pkgs.zlib
     pkgs.rubyPackages_4_0.ruby-vips
+    pkgs.bubblewrap
+    pkgs.socat
+    pkgs.pack
   ];
 
   # To use 'languages.ruby.version or languages.ruby.versionFile', run the following command:
@@ -137,6 +141,10 @@
       overmind start -f Procfile.dev
     '';
 
+    build-production.exec = ''
+      ./pack2 build contasemdia --builder heroku/builder:26 --platform linux/arm64 --env RAILS_ENV=production --network host
+    '';
+
     console.exec = ''
       bundle exec rails console
     '';
@@ -163,6 +171,7 @@
     echo "  devenv processes up - Inicia PostgreSQL e Redis (alternativo)"
     echo "  setup               - Configura a aplicação (após serviços)"
     echo "  dev                 - Inicia servidor de desenvolvimento"
+    echo "  build-production    - Gera a imagem de produção"
     echo "  console             - Abre console Rails"
     echo "  reset-db            - Reseta o banco de dados"
     echo "  health              - Verifica saúde dos serviços"

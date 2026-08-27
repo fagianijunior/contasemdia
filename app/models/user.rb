@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :wallets, dependent: :destroy
   has_many :credit_cards, dependent: :destroy
   has_many :transactions, dependent: :destroy
+  has_many :categories, dependent: :destroy
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 end

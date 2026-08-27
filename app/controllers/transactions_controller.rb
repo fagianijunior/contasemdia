@@ -3,13 +3,6 @@ class TransactionsController < ApplicationController
 
   def index
     @transactions = Current.user.transactions.includes(:wallet, :credit_card).order(due_date: :desc, created_at: :desc)
-
-    # Filtros
-    @transactions = @transactions.where(transaction_type: params[:type]) if params[:type].present?
-    @transactions = @transactions.where(status: params[:status]) if params[:status].present?
-    @transactions = @transactions.where(wallet_id: params[:wallet_id]) if params[:wallet_id].present?
-    @transactions = @transactions.where(credit_card_id: params[:credit_card_id]) if params[:credit_card_id].present?
-    @transactions = @transactions.where("title ILIKE ?", "%#{params[:query]}%") if params[:query].present?
   end
 
   def show
@@ -124,7 +117,7 @@ class TransactionsController < ApplicationController
 
   def transaction_params
     params.expect(transaction: [
-      :wallet_id, :credit_card_id, :title, :category, :amount,
+      :wallet_id, :credit_card_id, :category_id, :title, :amount,
       :transaction_type, :status, :due_date, :payment_date,
       :installment, :total_installments
     ])

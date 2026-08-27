@@ -55,10 +55,10 @@
         <dt class="text-sm font-medium text-gray-500">Data de Vencimento</dt>
         <dd class="text-sm text-gray-900"><%= l(@transaction.due_date, format: :long) if @transaction.due_date %></dd>
       </div>
-      <% if @transaction.category.present? %>
+      <% if @transaction.category_name.present? %>
         <div class="flex justify-between border-t pt-2">
           <dt class="text-sm font-medium text-gray-500">Categoria</dt>
-          <dd class="text-sm text-gray-900"><%= @transaction.category %></dd>
+          <dd class="text-sm text-gray-900"><%= @transaction.category_name %></dd>
         </div>
       <% end %>
       <% if @transaction.installment.present? && @transaction.total_installments.present? && @transaction.total_installments > 1 %>

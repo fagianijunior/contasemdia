@@ -1,5 +1,6 @@
 class Transaction < ApplicationRecord
   belongs_to :user
+  belongs_to :category, optional: true
   belongs_to :wallet, optional: true
   belongs_to :credit_card, optional: true
 
@@ -15,6 +16,10 @@ class Transaction < ApplicationRecord
     "pending" => "Pendente",
     "paid" => "Pago"
   }.freeze
+
+  def category_name
+    category&.name || self[:category]
+  end
 
   def amount=(value)
     if value.is_a?(String)

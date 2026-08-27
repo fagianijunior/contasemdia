@@ -1,4 +1,6 @@
-<%= form_with model: transaction, class: "space-y-4" do |form| %>
+<%= form_with model: transaction,
+      class: "space-y-4",
+      data: { controller: "transaction-form" } do |form| %>
   <% if transaction.errors.any? %>
     <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200">
       <ul class="list-disc list-inside space-y-1">
@@ -14,13 +16,46 @@
     <%= form.text_field :title, placeholder: "Ex: Aluguel, Supermercado...", class: "form-input" %>
   </div>
 
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <%= form.label :category, "Categoria", class: "form-label" %>
-      <%= form.text_field :category, placeholder: "Ex: Supermercado, Lazer", class: "form-input" %>
+  <% transaction_origin = transaction.credit_card_id.present? ? "credit_card" : "wallet" %>
+  <fieldset>
+    <legend class="form-label">Onde será lançado?</legend>
+    <div class="flex items-center gap-6 mt-2">
+      <label class="flex items-center gap-2 text-sm text-gray-700">
+        <%= radio_button_tag :transaction_origin, "wallet", transaction_origin == "wallet",
+              data: { transaction_form_target: "origin", action: "change->transaction-form#updateOrigin" } %>
+        Carteira
+      </label>
+      <label class="flex items-center gap-2 text-sm text-gray-700">
+        <%= radio_button_tag :transaction_origin, "credit_card", transaction_origin == "credit_card",
+              data: { transaction_form_target: "origin", action: "change->transaction-form#updateOrigin" } %>
+        Cartão de crédito
+      </label>
+    </div>
+  </fieldset>
+
+    <div class="grid grid-cols-2 gap-4">
+    <div data-transaction-form-target="wallet">
+      <%= form.label :wallet_id, "Carteira (Opcional)", class: "form-label" %>
+      <%= form.collection_select :wallet_id, Current.user.wallets, :id, :name, { include_blank: "Nenhuma" },
+            data: { transaction_form_target: "walletSelect" }, class: "form-input" %>
     </div>
     
-    <div>
+    <div data-transaction-form-target="creditCard">
+    <%= form.label :credit_card_id, "Cartão (Opcional)", class: "form-label" %>
+    <% credit_card_options = Current.user.credit_cards.map do |credit_card|
+         [credit_card.name, credit_card.id, { data: { due_day: credit_card.due_day } }]
+       end %>
+    <%= form.select :credit_card_id,
+          options_for_select(credit_card_options, transaction.credit_card_id),
+          { include_blank: "Nenhum" },
+          data: {
+            transaction_form_target: "creditCardSelect",
+            action: "change->transaction-form#updateDueDate"
+          },
+          class: "form-input" %>
+    </div>
+
+    <div data-transaction-form-target="installments">
       <%= form.label :total_installments, "Parcelar em (x vezes)", class: "form-label" %>
       <%= form.number_field :total_installments, value: transaction.new_record? ? 1 : transaction.total_installments, min: 1, class: "form-input" %>
       <% if !transaction.new_record? && transaction.total_installments.to_i > 1 %>
@@ -29,6 +64,32 @@
           Reprocessar/re-dividir essas parcelas
         </label>
       <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= form.label :transaction_type, "Tipo", class: "form-label" %>
+      <%= form.select :transaction_type,
+            Transaction::TRANSACTION_TYPE_LABELS.map { |k, v| [v, k] },
+            {},
+            class: "form-input",
+            data: { transaction_form_target: "transactionType", action: "change->transaction-form#updateCategories" } %>
+    </div>
+    
+    <div>
+      <%= form.label :category_id, "Categoria", class: "form-label" %>
+      <% category_options = Category.for_user(Current.user).order(:name).map do |category| 
+           [category.name, category.id, { data: { category_type: category.category_type } }]
+         end %>
+
+      <%= form.select :category_id,
+            options_for_select(category_options, transaction.category_id),
+            { include_blank: "Sem categoria" },
+            {
+              class: "form-input",
+              data: { transaction_form_target: "category" }
+            } %>
     </div>
   </div>
 
@@ -43,32 +104,14 @@
               value: transaction.amount.present? ? number_with_precision(transaction.amount, precision: 2, separator: ",") : nil %>
       </div>
     </div>
-
-    <div>
-      <%= form.label :transaction_type, "Tipo", class: "form-label" %>
-      <%= form.select :transaction_type,
-            Transaction::TRANSACTION_TYPE_LABELS.map { |k, v| [v, k] },
-            {},
-            class: "form-input" %>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <%= form.label :wallet_id, "Carteira (Opcional)", class: "form-label" %>
-      <%= form.collection_select :wallet_id, Current.user.wallets, :id, :name, { include_blank: "Nenhuma" }, class: "form-input" %>
-    </div>
-
-    <div>
-      <%= form.label :credit_card_id, "Cartão (Opcional)", class: "form-label" %>
-      <%= form.collection_select :credit_card_id, Current.user.credit_cards, :id, :name, { include_blank: "Nenhum" }, class: "form-input" %>
-    </div>
   </div>
 
   <div class="grid grid-cols-2 gap-4">
     <div>
       <%= form.label :due_date, "Data de Vencimento", class: "form-label" %>
-      <%= form.date_field :due_date, class: "form-input" %>
+      <%= form.date_field :due_date,
+        class: "form-input",
+        data: { transaction_form_target: "dueDate" } %>
     </div>
 
     <div>

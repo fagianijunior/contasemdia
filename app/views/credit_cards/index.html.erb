@@ -41,7 +41,7 @@
                 </div>
               </td>
               <td class="px-4 py-3">
-                <%= credit_card.bank %>
+                <%= credit_card.bank.name %>
               </td>
               <td class="px-4 py-3">
                 <%= number_to_currency(credit_card.limit, unit: "R$ ", separator: ",", delimiter: ".") %>

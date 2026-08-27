@@ -10,9 +10,11 @@ class WalletsController < ApplicationController
 
   def new
     @wallet = Current.user.wallets.new
+    @banks = Bank.order(:name)
   end
 
   def edit
+    @banks = Bank.order(:name)
   end
 
   def create
@@ -21,31 +23,27 @@ class WalletsController < ApplicationController
 
     if @wallet.save
       if csv_file.present?
-        importer_class = case @wallet.bank
-                         when "Nubank"
-                           TransactionImporters::Nubank
-                         when "Inter"
-                           TransactionImporters::Inter
-                         else
-                           nil
-                         end
+        importer_class = @wallet.bank&.importer_class
 
         if importer_class
           begin
             count = importer_class.new(@wallet, csv_file.path).import
             flash[:notice] = "Carteira criada com sucesso e #{count} transações importadas."
           rescue StandardError => e
-            logger.error "Erro ao importar CSV: #{e.message}"
-            flash[:notice] = "Carteira criada, mas houve um erro ao importar o arquivo CSV. Verifique se o formato está correto para o banco selecionado."
+            logger.error "Erro ao importar CSV: #{e.message}\n#{e.backtrace.join("\n")}"
+            flash[:alert] = "Carteira criada, mas houve um erro ao processar o CSV. Verifique o arquivo."
           end
         else
-          flash[:notice] = "Carteira criada. Importação de CSV não suportada para o banco #{@wallet.bank} ainda."
+          bank_name = @wallet.bank&.name || "selecionado"
+          flash[:alert] = "Carteira criada, mas a importação de CSV ainda não é suportada para o banco #{bank_name}."
         end
       else
         flash[:notice] = "Carteira criada com sucesso."
       end
+
       redirect_to wallets_path
     else
+      @banks = Bank.order(:name)
       render :new, status: :unprocessable_entity
     end
   end
@@ -70,6 +68,6 @@ class WalletsController < ApplicationController
   end
 
   def wallet_params
-    params.expect(wallet: [ :name, :wallet_type, :bank, :balance, :csv_file ])
+    params.expect(wallet: [ :name, :wallet_type, :bank_id, :balance, :csv_file ])
   end
 end

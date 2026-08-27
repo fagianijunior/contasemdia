@@ -8,15 +8,19 @@ class CreditCardsController < ApplicationController
 
   # GET /credit_cards/1 or /credit_cards/1.json
   def show
+    @open_invoices = @credit_card.open_invoices
+    @paid_invoices = @credit_card.paid_invoices
   end
 
   # GET /credit_cards/new
   def new
     @credit_card = Current.user.credit_cards.new
+    @banks = Bank.order(:name)
   end
 
   # GET /credit_cards/1/edit
   def edit
+    @banks = Bank.order(:name)
   end
 
   # POST /credit_cards or /credit_cards.json
@@ -60,11 +64,11 @@ class CreditCardsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_credit_card
-      @credit_card = CreditCard.find(params.expect(:id))
+      @credit_card = Current.user.credit_cards.find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.
     def credit_card_params
-      params.expect(credit_card: [ :user_id, :name, :bank, :limit, :closing_day, :due_day ])
+      params.expect(credit_card: [ :user_id, :name, :bank_id, :limit, :closing_day, :due_day ])
     end
 end

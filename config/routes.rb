@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :categories
   get "home/index"
   get "users/new"
   get "users/create"

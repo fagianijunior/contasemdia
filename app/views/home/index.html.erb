@@ -59,6 +59,40 @@
 
 </div>
 
+<!-- Cartões de crédito -->
+<div class="dashboard-card mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Cartões de crédito</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Acompanhe a fatura atual e os últimos lançamentos.</p>
+    </div>
+    <%= link_to "Ver todos", credit_cards_path, class: "text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-500" %>
+  </div>
+
+  <% if @credit_cards.any? %>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <% @credit_cards.each do |credit_card| %>
+        <% invoice = @credit_card_invoices[credit_card.id] %>
+        <% card_transactions = invoice ? invoice[:transactions].select(&:expense?) : [] %>
+        <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-semibold text-gray-900 dark:text-white"><%= credit_card.name %></p>
+              <p class="text-xs text-gray-500 dark:text-gray-400"><%= credit_card.bank&.name || "Cartão de crédito" %></p>
+            </div>
+            <span class="rounded bg-cyan-100 px-2 py-1 text-xs font-medium text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200"><%= invoice ? (invoice[:month] == Date.current.beginning_of_month ? "Fatura atual" : "Próxima fatura") : "Sem fatura aberta" %></span>
+          </div>
+          <p class="mt-4 text-2xl font-bold text-gray-900 dark:text-white"><%= number_to_currency(card_transactions.sum(&:amount), unit: "R$ ", separator: ",", delimiter: ".") %></p>
+          <p class="text-sm text-gray-500 dark:text-gray-400"><%= pluralize(card_transactions.size, "lançamento", "lançamentos") %></p>
+          <%= link_to "Ver detalhes da fatura", credit_card_path(credit_card), class: "mt-4 inline-flex text-sm font-medium text-cyan-600 hover:underline dark:text-cyan-500" %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="py-4 text-sm text-gray-500 dark:text-gray-400">Nenhum cartão de crédito cadastrado.</p>
+  <% end %>
+</div>
+
 <!-- Grid inferior: Últimos lançamentos + Carteiras -->
 <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
 

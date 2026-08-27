@@ -5,6 +5,7 @@ class CreateWallets < ActiveRecord::Migration[8.1]
       t.string :name
       t.integer :wallet_type
       t.decimal :balance, precision: 10, scale: 2
+      t.references :bank, null: true, foreign_key: true
 
       t.timestamps
     end

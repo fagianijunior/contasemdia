@@ -1,6 +1,7 @@
 class Wallet < ApplicationRecord
   belongs_to :user
   has_many :transactions, dependent: :destroy
+  belongs_to :bank, optional: true
 
   enum :wallet_type, { checking: 0, savings: 1, cash: 2, investment: 3, other: 4 }
 
@@ -11,18 +12,6 @@ class Wallet < ApplicationRecord
     "investment" => "Investimento",
     "other" => "Outro"
   }.freeze
-
-  BANKS = [
-    "Inter",
-    "Nubank",
-    "Caixa Econômica",
-    "Banco do Brasil",
-    "C6 Bank",
-    "Itaú",
-    "Bradesco",
-    "Santander",
-    "Outro"
-  ].freeze
 
   def balance=(value)
     if value.is_a?(String)
