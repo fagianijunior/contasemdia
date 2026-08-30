@@ -149,6 +149,20 @@
       bundle exec rails console
     '';
 
+    start-production.exec = ''
+      echo "🚀 Inicializando servidor em modo produção..."
+      echo ""
+      echo "Por favor, forneça as credenciais do banco de dados:"
+      read -p "DATABASE_USERNAME: " DB_USERNAME
+      read -sp "DATABASE_PASSWORD: " DB_PASSWORD
+      echo ""
+      read -p "DATABASE_HOST: " DB_HOST
+      echo ""
+      echo "✅ Iniciando servidor com as credenciais fornecidas..."
+      echo ""
+      TZ="America/Fortaleza" RAILS_ENV=production DATABASE_USERNAME="$DB_USERNAME" DATABASE_PASSWORD="$DB_PASSWORD" DATABASE_HOST="$DB_HOST" rails s -p 3002 -b 0.0.0.0
+    '';
+
     reset-db.exec = ''
       echo "🗑️ Resetando banco de dados..."
       bundle exec rails db:drop db:create db:migrate db:seed
@@ -171,6 +185,7 @@
     echo "  devenv processes up - Inicia PostgreSQL e Redis (alternativo)"
     echo "  setup               - Configura a aplicação (após serviços)"
     echo "  dev                 - Inicia servidor de desenvolvimento"
+    echo "  start-production    - Inicia servidor de produção (solicita credenciais)"
     echo "  build-production    - Gera a imagem de produção"
     echo "  console             - Abre console Rails"
     echo "  reset-db            - Reseta o banco de dados"
