@@ -160,7 +160,7 @@
       echo ""
       echo "✅ Iniciando servidor com as credenciais fornecidas..."
       echo ""
-      TZ="America/Fortaleza" RAILS_ENV=production DATABASE_USERNAME="$DB_USERNAME" DATABASE_PASSWORD="$DB_PASSWORD" DATABASE_HOST="$DB_HOST" rails s -p 3002 -b 0.0.0.0
+      TZ="America/Fortaleza" RAILS_ENV=production DATABASE_USERNAME="$DB_USERNAME" DATABASE_PASSWORD="$DB_PASSWORD" DATABASE_HOST="$DB_HOST" bundle exec rails s -p 3002 -b 0.0.0.0
     '';
 
     reset-db.exec = ''
