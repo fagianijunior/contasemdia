@@ -3,7 +3,13 @@ module TransactionImporters
     protected
 
     def csv_options
-      { headers: false, col_sep: ";" }
+      { 
+        headers: false, 
+        col_sep: ";",
+        liberal_parsing: true,
+        quote_char: '"',
+        skip_blanks: false
+      }
     end
 
     def skip_row?(row)
