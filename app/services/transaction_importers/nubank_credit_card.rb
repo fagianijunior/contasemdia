@@ -34,6 +34,13 @@ module TransactionImporters
           title = title.gsub(/- Parcela \d+\/\d+/, "").strip
         end
 
+        # Busca ou cria a categoria
+        category = @user.categories.find_by(name: "Cartão de Crédito")
+        if category.nil?
+          Rails.logger.info "🏷️ [NubankCreditCard] Criando categoria: 'Cartão de Crédito'"
+          category = @user.categories.create!(name: "Cartão de Crédito")
+        end
+
         fingerprint = generate_fingerprint({
           date: date_str,
           title: row["title"],
@@ -43,7 +50,7 @@ module TransactionImporters
 
         {
           title: title.truncate(100),
-          category: "Cartão de Crédito",
+          category: category,
           amount: amount.abs,
           transaction_type: amount >= 0 ? :expense : :income, # No Nubank fatura, despesas são positivas e pagamentos negativos
           status: :pending,

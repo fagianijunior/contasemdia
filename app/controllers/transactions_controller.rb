@@ -72,7 +72,6 @@ class TransactionsController < ApplicationController
 
   def handle_csv_import
     csv_file = params[:csv_file]
-    target_type = params[:import_target_type] # 'wallet' ou 'credit_card'
     target_id = params[:import_target_id]
 
     if csv_file.blank? || target_id.blank?
@@ -82,22 +81,24 @@ class TransactionsController < ApplicationController
     end
 
     begin
-      bank = if target_type == "wallet"
-                 Current.user.wallets.find(target_id).bank
-               else
-                 Current.user.credit_cards.find(target_id).bank
-               end
-      target = if target_type == "wallet"
-                 Current.user.wallets.find(target_id)
-               else
-                 Current.user.credit_cards.find(target_id)
-               end
+      # Determina se é wallet ou credit_card
+      target = Current.user.wallets.find_by(id: target_id) || 
+               Current.user.credit_cards.find_by(id: target_id)
+
+      if target.blank?
+        flash[:alert] = "Conta de destino não encontrada."
+        redirect_to new_transaction_path
+        return
+      end
+
+      bank = target.bank&.code
+      target_type = target.is_a?(Wallet) ? "wallet" : "credit_card"
 
       importer_class = case [bank, target_type]
-                       when ["Nubank", "wallet"] then TransactionImporters::Nubank
-                       when ["Inter", "wallet"] then TransactionImporters::Inter
-                       when ["Nubank", "credit_card"] then TransactionImporters::NubankCreditCard
-                       when ["Inter", "credit_card"] then TransactionImporters::InterCreditCard
+                       when ["260", "wallet"] then TransactionImporters::Nubank
+                       when ["077", "wallet"] then TransactionImporters::Inter
+                       when ["260", "credit_card"] then TransactionImporters::NubankCreditCard
+                       when ["077", "credit_card"] then TransactionImporters::InterCreditCard
                        else nil
                        end
 
@@ -105,7 +106,7 @@ class TransactionsController < ApplicationController
         count = importer_class.new(target, csv_file.path).import
         flash[:notice] = "#{count} transações importadas com sucesso!"
       else
-        flash[:alert] = "Importação não suportada para a combinação de Banco e Tipo selecionada."
+        flash[:alert] = "Importação não suportada para o banco '#{bank}' ou tipo de conta '#{target_type}'."
       end
     rescue StandardError => e
       logger.error "Erro na importação de CSV: #{e.message}"

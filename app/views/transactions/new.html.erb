@@ -26,26 +26,20 @@
       <div class="p-4 bg-cyan-50 border border-cyan-200 rounded-lg mb-4">
         <h4 class="text-sm font-semibold text-cyan-800 mb-2">Instruções</h4>
         <ul class="text-xs text-cyan-700 list-disc list-inside space-y-1">
-          <li>Selecione o banco de origem (Inter ou Nubank)</li>
-          <li>Indique a conta destino (Carteira ou Cartão de Crédito)</li>
+          <li>Selecione a conta destino (Carteira ou Cartão de Crédito)</li>
           <li>Faça o upload do arquivo CSV exportado</li>
+          <li>O banco será detectado automaticamente pela configuração da conta</li>
         </ul>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <%= f.label :import_target_type, "Tipo de Conta", class: "form-label" %>
-          <%= f.select :import_target_type, 
-              [["Carteira / Conta Corrente", "wallet"], ["Cartão de Crédito", "credit_card"]], 
-              {}, 
-              class: "form-input",
-              onchange: "document.getElementById('import_target_id').innerHTML = this.value === 'wallet' ? document.getElementById('wallet_options').innerHTML : document.getElementById('card_options').innerHTML;" 
-          %>
-        </div>
-        <div>
-          <%= f.label :import_target_id, "Conta de Destino", class: "form-label" %>
-          <%= f.select :import_target_id, Current.user.wallets.pluck(:name, :id), { prompt: "Selecione a conta" }, class: "form-input" %>
-        </div>
+      <div>
+        <%= f.label :import_target_id, "Conta de Destino", class: "form-label" %>
+        <% 
+          wallet_options = Current.user.wallets.map { |w| [w.name, w.id, { data: { type: "wallet", bank: w.bank&.name } }] }
+          card_options = Current.user.credit_cards.map { |c| [c.name, c.id, { data: { type: "credit_card", bank: c.bank&.name } }] }
+          all_options = [["-- Carteiras --", wallet_options], ["-- Cartões de Crédito --", card_options]]
+        %>
+        <%= f.select :import_target_id, all_options, { prompt: "Selecione a conta" }, class: "form-input" %>
       </div>
 
       <div>
