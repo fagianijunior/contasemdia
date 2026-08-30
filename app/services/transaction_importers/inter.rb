@@ -16,6 +16,7 @@ module TransactionImporters
       # Pula cabeçalhos e linhas de saldo
       return true if row[0].nil?
       return true unless row[0].match?(/\d{2}\/\d{2}\/\d{4}/)
+      return true if row.length < 5
       false
     end
 
