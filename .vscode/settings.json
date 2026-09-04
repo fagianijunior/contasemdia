@@ -1,4 +1,0 @@
-{
-    "nixEnvSelector.nixFile": "${workspaceFolder}/.devenv.flake.nix",
-    "nixEnvSelector.useFlakes": false
-}
