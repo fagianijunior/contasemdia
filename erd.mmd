@@ -1,0 +1,63 @@
+erDiagram
+	direction TB
+	CreditCard {
+		string bank
+		integer closing_day
+		datetime created_at
+		integer due_day
+		integer id PK
+		decimal limit
+		string name
+		datetime updated_at
+		integer user_id FK
+	}
+	Session {
+		datetime created_at
+		integer id PK
+		string ip_address
+		datetime updated_at
+		string user_agent
+		integer user_id FK
+	}
+	Transaction {
+		decimal amount
+		string category
+		datetime created_at
+		integer credit_card_id FK
+		date due_date
+		string external_id
+		string fingerprint
+		integer id PK
+		integer installment
+		date payment_date
+		integer status
+		string title
+		integer total_installments
+		integer transaction_type
+		datetime updated_at
+		integer user_id FK
+		integer wallet_id FK
+	}
+	User {
+		datetime created_at
+		string email_address
+		integer id PK
+		string password_digest
+		datetime updated_at
+	}
+	Wallet {
+		decimal balance
+		string bank
+		datetime created_at
+		integer id PK
+		string name
+		datetime updated_at
+		integer user_id FK
+		integer wallet_type
+	}
+	User ||--}o CreditCard : ""
+	CreditCard o|--}o Transaction : ""
+	User ||--}o Session : ""
+	User ||--}o Transaction : ""
+	Wallet o|--}o Transaction : ""
+	User ||--}o Wallet : ""
